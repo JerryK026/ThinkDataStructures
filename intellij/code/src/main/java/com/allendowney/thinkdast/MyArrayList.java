@@ -1,10 +1,6 @@
 package com.allendowney.thinkdast;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * @author downey
@@ -45,7 +41,13 @@ public class MyArrayList<T> implements List<T> {
 	@Override
 	public boolean add(T element) {
 		// TODO: FILL THIS IN!
-		return false;
+		if (size >= array.length) {
+			T[] newArray = (T[]) new Object[array.length * 2];
+			System.arraycopy(array, 0, newArray, 0, size);
+			array = newArray;
+		}
+		array[size++] = element;
+		return true;
 	}
 
 	@Override
@@ -108,9 +110,23 @@ public class MyArrayList<T> implements List<T> {
 		return array[index];
 	}
 
+	// equals()메서드로 코드 중복을 제거할 수 있음
 	@Override
 	public int indexOf(Object target) {
 		// TODO: FILL THIS IN!
+		for (int i = 0; i < size; i++) {
+			if (Objects.isNull(target)) {
+				if (Objects.isNull(get(i))) {
+					return i;
+				}
+
+			} else {
+				if (target.equals(get(i))) {
+					return i;
+				}
+			}
+		}
+
 		return -1;
 	}
 
@@ -119,7 +135,7 @@ public class MyArrayList<T> implements List<T> {
 	 * Handles the special case that the target is null.
 	 *
 	 * @param target
-	 * @param object
+	 * @param element
 	 */
 	private boolean equals(Object target, Object element) {
 		if (target == null) {
@@ -179,10 +195,19 @@ public class MyArrayList<T> implements List<T> {
 		return true;
 	}
 
+	// get()을 사용해서 코드 중복을 줄일 수 있음 (심지어 예외 중복도)
 	@Override
 	public T remove(int index) {
 		// TODO: FILL THIS IN!
-		return null;
+		if (index < 0 || index > size) {
+			throw new IndexOutOfBoundsException();
+		}
+		T old = array[index];
+		for (int i = index; i < size; i++) {
+			array[i] = array[i + 1];
+		}
+		size--;
+		return old;
 	}
 
 	@Override
@@ -202,7 +227,21 @@ public class MyArrayList<T> implements List<T> {
 	@Override
 	public T set(int index, T element) {
 		// TODO: FILL THIS IN!
-		return null;
+		if (!element.getClass().equals(array[0].getClass())) {
+			throw new ClassCastException();
+		}
+
+		if (Objects.isNull(element)) {
+			throw new NullPointerException();
+		}
+
+		if (index < 0 || index >= size) {
+			throw new IndexOutOfBoundsException();
+		}
+
+		T old = array[index];
+		array[index] = element;
+		return old;
 	}
 
 	@Override
